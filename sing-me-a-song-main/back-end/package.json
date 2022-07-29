@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "nodemon src/server.ts"
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev:test": "dotenv -e .test.env nodemon src/server.ts",
+    "dev": "nodemon src/server.ts",
+    "test": "dotenv -e .test.env prisma migrate dev && NODE_OPTIONS=--experimental-vm-modules dotenv -e .test.env jest -i"
   },
   "keywords": [],
   "author": "",
