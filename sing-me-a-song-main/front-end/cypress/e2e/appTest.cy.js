@@ -4,6 +4,10 @@ import { faker } from "@faker-js/faker";
 const URL = "http://localhost:3000";
 const RECOMMENDATIONS_NUMBERS = 0;
 
+before(() => {
+    cy.resetRecommendations();
+});
+
 describe('app test', ()=> {
     it('create a new recommendation', ()=> {
         const recommendation = {
@@ -57,4 +61,8 @@ describe('app test', ()=> {
         cy.url().should("equal", `${URL}/random`);
         cy.get('article').should('have.length', (RECOMMENDATIONS_NUMBERS + 1));
     });
+});
+
+after(()=> {
+    cy.resetRecommendations();
 });
