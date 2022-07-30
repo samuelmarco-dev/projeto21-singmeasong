@@ -5,7 +5,7 @@ import { prisma } from "../../src/database.js";
 function generateRecommendation(){
     return {
         name: faker.lorem.words(),
-        youtubeLink: `https://www.youtube.com/watch?v=${faker.datatype.string(11)}`,
+        youtubeLink: `https://www.youtube.com/watch?v=${faker.lorem.word(11)}`
     }
 }
 
