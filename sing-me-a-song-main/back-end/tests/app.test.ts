@@ -34,6 +34,18 @@ describe('GET /recommendation/:id', ()=> {
     });
 });
 
+describe('GET /recommendations/top/:amount', ()=> {
+    it('given a number, find the top recommendations', async()=> {
+        await recommendationFactory.createManyRecommendations();
+        const response = await supertest(app).get('/recommendations/top/10');
+
+        expect(response.body.length).toBe(7);
+        expect(response.status).toBe(200);
+
+        await prisma.recommendation.deleteMany({});
+    });
+});
+
 describe('POST /recommendations/:id/upvote', ()=> {
     it('given a valid id, update the score of the recommendation as upvote', async()=> {
         const findRecommendation = await recommendationFactory.createRecommendationAndReturnId();

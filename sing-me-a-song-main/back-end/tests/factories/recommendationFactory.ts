@@ -20,9 +20,22 @@ async function createRecommendationAndReturnId(){
     });
 }
 
+async function createManyRecommendations() {
+    await prisma.recommendation.createMany({
+        data: [
+            generateRecommendation(),
+            generateRecommendation(),
+            generateRecommendation(),
+            generateRecommendation(),
+            generateRecommendation()
+        ]
+    });
+}
+
 const recommendationFactory = {
     generateRecommendation,
-    createRecommendationAndReturnId
+    createRecommendationAndReturnId,
+    createManyRecommendations
 }
 
 export default recommendationFactory;
