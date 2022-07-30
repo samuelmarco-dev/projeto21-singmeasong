@@ -1,5 +1,7 @@
 import { faker } from "@faker-js/faker";
 
+import { prisma } from "../../src/database.js";
+
 function generateRecommendation(){
     return {
         name: faker.lorem.words(),
@@ -7,8 +9,20 @@ function generateRecommendation(){
     }
 }
 
+async function createRecommendationAndReturnId(){
+    const recommendation = generateRecommendation();
+    await prisma.recommendation.create({
+        data: recommendation
+    });
+
+    return await prisma.recommendation.findUnique({
+        where: { name: recommendation.name }
+    });
+}
+
 const recommendationFactory = {
-    generateRecommendation
+    generateRecommendation,
+    createRecommendationAndReturnId
 }
 
 export default recommendationFactory;
