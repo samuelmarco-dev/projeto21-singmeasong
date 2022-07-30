@@ -25,6 +25,15 @@ describe('GET /recommendations/', ()=> {
     });
 });
 
+describe('GET /recommendation/:id', ()=> {
+    it('find a recommendation by id', async()=> {
+        const findRecommendation = await recommendationFactory.createRecommendationAndReturnId();
+        const response = await supertest(app).get(`/recommendations/${findRecommendation.id}`);
+
+        expect(response.status).toBe(200);
+    });
+});
+
 describe('POST /recommendations/:id/upvote', ()=> {
     it('given a valid id, update the score of the recommendation as upvote', async()=> {
         const findRecommendation = await recommendationFactory.createRecommendationAndReturnId();
