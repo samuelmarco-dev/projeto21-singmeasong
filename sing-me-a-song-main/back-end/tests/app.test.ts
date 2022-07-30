@@ -64,6 +64,14 @@ describe('POST /recommendations/:id/downvote', ()=> {
     });
 });
 
+describe('GET /recommendations/random', ()=> {
+    it('expect a random recommendation', async()=> {
+        const response = await supertest(app).get('/recommendations/random');
+
+        expect(response.status).toBe(200);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
