@@ -114,4 +114,43 @@ describe('recommendationsService test suite', ()=> {
         expect(recommendationRepository.updateScore).toBeCalled();
         expect(recommendationRepository.remove).toBeCalled();
     });
+
+    it('should return all recommendations', async ()=> {
+        jest.spyOn(recommendationRepository, 'findAll').mockResolvedValueOnce([]);
+
+        const promise = await recommendationService.get();
+        expect(recommendationRepository.findAll).toBeCalled();
+        expect(promise).toEqual([]);
+    });
+
+    it('should return a recommendation by id', async ()=> {
+        const recomendation: CreateRecommendationData = recommendationFactory.generateRecommendation();
+        
+        jest.spyOn(recommendationRepository, 'find').mockImplementationOnce(():any => {
+            return {
+                id: 1,
+                name: recomendation.name,
+                youtubeLink: recomendation.youtubeLink,
+                score: 0
+            }
+        });
+
+        const promise = await recommendationService.getById(1);
+        expect(recommendationRepository.find).toBeCalled();
+        expect(promise).toEqual({
+            id: 1,
+            name: recomendation.name,
+            youtubeLink: recomendation.youtubeLink,
+            score: 0
+        });
+    });
+
+    it('should return recommendations according to the score', async ()=> {
+        const amount = 10;
+        jest.spyOn(recommendationRepository, 'getAmountByScore').mockResolvedValueOnce([]);
+
+        const promise = await recommendationService.getTop(amount);
+        expect(recommendationRepository.getAmountByScore).toBeCalled();
+        expect(promise).toEqual([]);
+    });
 });
