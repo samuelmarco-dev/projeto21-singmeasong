@@ -108,6 +108,13 @@ describe('GET /recommendations/random', ()=> {
 
         expect(response.status).toBe(200);
     });
+
+    it('should not return a recommendation if no recommendations exist', async()=> {
+        await prisma.recommendation.deleteMany({});
+        const response = await supertest(app).get('/recommendations/random');
+
+        expect(response.status).toBe(404);
+    });
 });
 
 afterAll(async () => {
