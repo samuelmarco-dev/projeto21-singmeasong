@@ -62,6 +62,15 @@ describe('recommendationsService test suite', ()=> {
         expect(recommendationRepository.find).toBeCalled();
         expect(recommendationRepository.updateScore).toBeCalled();
     });
+
+    it('should not create upvote a recommendation if it does not exist', async ()=> {
+        jest.spyOn(recommendationRepository, 'find').mockResolvedValueOnce(null);
+
+        expect(recommendationRepository.find).not.toBeCalled();
+        expect(async () => {
+            await recommendationService.upvote(1)
+        }).rejects.toEqual({ message: '', type: 'not_found' });
+    });
     
     it('should create downvote a recommendation', async ()=> {
         const recomendation: CreateRecommendationData = recommendationFactory.generateRecommendation();
@@ -86,6 +95,15 @@ describe('recommendationsService test suite', ()=> {
         await recommendationService.downvote(1);
         expect(recommendationRepository.find).toBeCalled();
         expect(recommendationRepository.updateScore).toBeCalled();
+    });
+
+    it('should not create downvote a recommendation if it does not exist', async ()=> {
+        jest.spyOn(recommendationRepository, 'find').mockResolvedValueOnce(null);
+
+        expect(recommendationRepository.find).not.toBeCalled();
+        expect(async () => {
+            await recommendationService.downvote(1)
+        }).rejects.toEqual({ message: '', type: 'not_found' });
     });
 
     it('should not create downvote a recommendation if it has a score less than -5', async ()=> {
@@ -145,6 +163,15 @@ describe('recommendationsService test suite', ()=> {
         });
     });
 
+    it('should not return a recommendation by id if it does not exist', async ()=> {
+        jest.spyOn(recommendationRepository, 'find').mockResolvedValueOnce(null);
+
+        expect(recommendationRepository.find).not.toBeCalled();
+        expect(async () => {
+            await recommendationService.getById(1);
+        }).rejects.toEqual({ message: '', type: 'not_found' });
+    });
+
     it('should return recommendations according to the score', async ()=> {
         const amount = 10;
         jest.spyOn(recommendationRepository, 'getAmountByScore').mockResolvedValueOnce([]);
@@ -153,4 +180,12 @@ describe('recommendationsService test suite', ()=> {
         expect(recommendationRepository.getAmountByScore).toBeCalled();
         expect(promise).toEqual([]);
     });
+
+    it('70% of the time, it should return a random recommendation with a score greater than 10', async ()=> {});
+
+    it('30% of the time, it should return a random recommendation with a score between -5 and 10', async ()=> {});
+
+    it('if there are only songs with a score greater than 10 or less than or equal to 10, 100% of the time it should return a random recommendation', async ()=> {});
+
+    it('should not return a recommendation if there are no recommendations', async ()=> {});
 });
