@@ -203,8 +203,9 @@ describe('recommendationsService test suite', ()=> {
     });
 
     it('should found a error', async ()=> {
-        jest.spyOn(Math, 'random').mockImplementationOnce((): any => 0.3);
+        const possibility = 0.3;
 
+        jest.spyOn(Math, 'random').mockImplementationOnce((): any => possibility);
         jest.spyOn(recommendationService, "getByScore").mockResolvedValue([]);
         jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
         
