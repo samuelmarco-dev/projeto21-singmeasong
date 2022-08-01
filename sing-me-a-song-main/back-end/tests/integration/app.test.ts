@@ -10,11 +10,31 @@ beforeAll(async () => {
 });
 
 describe('POST /recommendations/', ()=> {
+    it('given a invalid input', async ()=> {
+        const recommendation = {
+            name: '', youtubeLink: ''
+        };
+        const response = await supertest(app).post('/recommendations').send(recommendation);
+
+        expect(response.status).toBe(422);
+    });
+    
     it('given a valid recommendation, give back 201', async()=> {
         const recommendation = recommendationFactory.generateRecommendation();
         const response = await supertest(app).post('/recommendations/').send(recommendation);
+        const create = await prisma.recommendation.findUnique({
+            where: { name: recommendation.name }
+        });
 
         expect(response.status).toBe(201);
+        expect(create).not.toBeNull();
+    });
+
+    it('given a recommendation with a name that already exists, give back 409', async()=> {
+        const recommendationExists = await recommendationFactory.createRecommendationForConflict();
+        const response = await supertest(app).post('/recommendations/').send(recommendationExists);
+
+        expect(response.status).toBe(409);
     });
 });
 
@@ -33,17 +53,22 @@ describe('GET /recommendation/:id', ()=> {
 
         expect(response.status).toBe(200);
     });
+
+    it('given a invalid id, give back 404', async()=> {
+        const response = await supertest(app).get('/recommendations/0');
+
+        expect(response.status).toBe(404);
+    });
 });
 
 describe('GET /recommendations/top/:amount', ()=> {
     it('given a number, find the top recommendations', async()=> {
+        await prisma.recommendation.deleteMany({});
         await recommendationFactory.createManyRecommendations();
         const response = await supertest(app).get('/recommendations/top/10');
 
-        expect(response.body.length).toBe(7);
+        expect(response.body.length).toBe(5);
         expect(response.status).toBe(200);
-
-        await prisma.recommendation.deleteMany({});
     });
 });
 
@@ -54,6 +79,12 @@ describe('POST /recommendations/:id/upvote', ()=> {
 
         expect(response.status).toBe(200);
     });
+
+    it('given a invalid id, give back 404', async()=> {
+        const response = await supertest(app).post('/recommendations/0/upvote');
+
+        expect(response.status).toBe(404);
+    });
 });
 
 describe('POST /recommendations/:id/downvote', ()=> {
@@ -62,6 +93,12 @@ describe('POST /recommendations/:id/downvote', ()=> {
         const response = await supertest(app).post(`/recommendations/${findRecommendation.id}/downvote`);
 
         expect(response.status).toBe(200);
+    });
+
+    it('given a invalid id, give back 404', async()=> {
+        const response = await supertest(app).post('/recommendations/0/downvote');
+
+        expect(response.status).toBe(404);
     });
 });
 
