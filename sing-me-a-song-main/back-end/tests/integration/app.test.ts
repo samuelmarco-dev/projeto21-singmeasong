@@ -78,6 +78,7 @@ describe('POST /recommendations/:id/upvote', ()=> {
         const response = await supertest(app).post(`/recommendations/${findRecommendation.id}/upvote`);
 
         expect(response.status).toBe(200);
+        expect(findRecommendation).not.toBeNull();
     });
 
     it('given a invalid id, give back 404', async()=> {
@@ -93,6 +94,7 @@ describe('POST /recommendations/:id/downvote', ()=> {
         const response = await supertest(app).post(`/recommendations/${findRecommendation.id}/downvote`);
 
         expect(response.status).toBe(200);
+        expect(findRecommendation).not.toBeNull();
     });
 
     it('given a invalid id, give back 404', async()=> {

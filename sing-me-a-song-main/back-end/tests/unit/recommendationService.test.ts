@@ -181,11 +181,35 @@ describe('recommendationsService test suite', ()=> {
         expect(promise).toEqual([]);
     });
 
-    it('70% of the time, it should return a random recommendation with a score greater than 10', async ()=> {});
+    it('should return a random recommendation with a score greater than 10', async ()=> {
+        const possibility = 0.7;
+        const recommendation = {
+            ...recommendationFactory.generateRecommendation(),
+            id: 1,
+            score: 20
+        };
 
-    it('30% of the time, it should return a random recommendation with a score between -5 and 10', async ()=> {});
+        jest.spyOn(Math, 'random').mockImplementationOnce((): any => possibility);
+        jest.spyOn(recommendationRepository, 'findAll').mockImplementationOnce(():any => {
+            return [recommendation]; 
+        });
+        jest.spyOn(Math, 'floor').mockImplementationOnce((): any => 0);
 
-    it('if there are only songs with a score greater than 10 or less than or equal to 10, 100% of the time it should return a random recommendation', async ()=> {});
+        const response = await recommendationService.getRandom();
+        expect(Math.random).toBeCalled();
+        expect(recommendationRepository.findAll).toBeCalled();
+        expect(Math.floor).toBeCalled();
+        expect(response).toBe(recommendation);
+    });
 
-    it('should not return a recommendation if there are no recommendations', async ()=> {});
+    it('should found a error', async ()=> {
+        jest.spyOn(Math, 'random').mockImplementationOnce((): any => 0.3);
+
+        jest.spyOn(recommendationService, "getByScore").mockResolvedValue([]);
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
+        
+        expect(async () => {
+          await recommendationService.getRandom();
+        }).rejects.toEqual({ message: "", type: "not_found" });
+    });
 });
