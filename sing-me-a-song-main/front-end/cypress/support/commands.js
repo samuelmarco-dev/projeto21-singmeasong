@@ -25,6 +25,5 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add("resetRecommendations", () => {
-    cy.log("resetando");
-    cy.request("POST", "http://localhost:5000/recommendations/reset");
+    cy.request("POST", "http://localhost:5000/recommendations/reset", { });
 });
